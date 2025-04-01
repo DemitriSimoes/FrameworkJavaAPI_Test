@@ -12,6 +12,7 @@ class Calc implements Conta{
     public int soma(int a, int b){
         return a + b;
     }
+
 }
 
 public class Main {

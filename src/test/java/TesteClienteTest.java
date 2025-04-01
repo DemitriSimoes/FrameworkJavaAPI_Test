@@ -14,6 +14,7 @@ public class TesteClienteTest {
 
     //private static final String enderecoLocal = "http://localhost:8080";
     private static final String caminhoCliente = "/cliente";
+    private static final String risco = "/risco/";
     private static final String apagaTodosClientes = "/apagaTodos";
     private static final String respostaVazia = "{}";
     Cliente novoCliente = new Cliente("Tio Patinhas", 200, 101);
@@ -51,11 +52,6 @@ public class TesteClienteTest {
 
        postCliente();
 
-       given().when().then()
-               .statusCode(HttpStatus.SC_CREATED)
-               .body("200.idade", equalTo(200))
-               .body("Tio Patinhas.nome", equalTo("Tio Patinhas"))
-               .body("101.id", equalTo(101));
     }
 
     @Test
@@ -103,6 +99,36 @@ public class TesteClienteTest {
 
     }
 
+    @Test
+    @DisplayName("When get a risk with valid credential, Then it will return successful")
+    public void quandoSolicitarRiscoCredencialValida_RetornaBemSucedida(){
+
+        postCliente();
+
+        int riscoEsperado = -890;
+
+        given()
+                //.contentType(ContentType.JSON)
+                .auth()
+                .basic("aluno", "senha")
+                .when()
+                .get(risco+novoCliente.getId())
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.SC_OK)
+                .body("risco", equalTo(riscoEsperado));
+    }
+
+    @Test
+    @DisplayName("When put two values on sum method, then it will return sum results")
+    public void testConta(){
+
+        Calc calc = new Calc();
+        int result = calc.soma(5, 3);
+        assertEquals(8, result);
+
+    }
+
     public void postCliente() {
 
         String respostaNovoCliente = "{\"101\":{\"nome\":\"Tio Patinhas\",\"idade\":200,\"id\":101,\"risco\":0}}";
@@ -110,13 +136,13 @@ public class TesteClienteTest {
         given()
                 .contentType(ContentType.JSON)
                 .body(novoCliente)
-                .when()
+        .when()
                 .post(caminhoCliente)
-                .then()
+        .then()
                 .assertThat()
                 .statusCode(HttpStatus.SC_CREATED)
-                .body("Tio Patinha.nome", equalTo("nome"))
-                .body("200.idade", equalTo(200))
+                .body("101.nome", equalTo("Tio Patinhas"))
+                .body("101.idade", equalTo(200))
                 .body(containsString(respostaNovoCliente));
     }
 
@@ -131,15 +157,5 @@ public class TesteClienteTest {
         .then()
                 .statusCode(HttpStatus.SC_OK)
                 .assertThat().body(new IsEqual<>(respostaVazia));
-    }
-
-    @Test
-    @DisplayName("Quando colocar dois valores no método soma, então retornar o resultado da soma")
-    public void testConta(){
-
-        Calc calc = new Calc();
-        int result = calc.soma(5, 3);
-        assertEquals(8, result);
-
     }
 }
