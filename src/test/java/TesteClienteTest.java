@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 //@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 
@@ -130,5 +131,15 @@ public class TesteClienteTest {
         .then()
                 .statusCode(HttpStatus.SC_OK)
                 .assertThat().body(new IsEqual<>(respostaVazia));
+    }
+
+    @Test
+    @DisplayName("Quando colocar dois valores no método soma, então retornar o resultado da soma")
+    public void testConta(){
+
+        Calc calc = new Calc();
+        int result = calc.soma(5, 3);
+        assertEquals(8, result);
+
     }
 }
